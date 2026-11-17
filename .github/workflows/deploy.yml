@@ -1,0 +1,25 @@
+
+name: Deploy Spring Boot to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build Spring Boot application
+        working-directory: ./HW-1
+        run: bash ./mvnw clean package
