@@ -21,5 +21,4 @@ jobs:
           java-version: '17'
 
       - name: Build Spring Boot application
-        working-directory: ./HW-1
-        run: bash ./mvnw clean package
+        run: mvn clean package
