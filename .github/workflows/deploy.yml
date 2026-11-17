@@ -22,3 +22,7 @@ jobs:
 
       - name: Build Spring Boot application
         run: mvn clean package
+        
+      - name: Verify JAR file
+        run: ls -lh target/*.jar
+
