@@ -35,4 +35,31 @@ jobs:
             source: "target/*.jar"
             target: "/home/ubuntu/apps/helloworld/"
             strip_components: 1
+      - name: Start Spring Boot application on EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/apps/helloworld
+            JAR=$(find . -maxdepth 1 -name "*.jar" -type f | head -n 1)
+            if [ -z "$JAR" ]; then
+              echo "JAR file not found"
+              exit 1
+            fi
+            if [ -f app.pid ]; then
+              kill "$(cat app.pid)" 2>/dev/null || true
+              rm -f app.pid
+            fi
+            nohup java -jar "$JAR" > app.log 2>&1 &
+            echo $! > app.pid
+            sleep 10
+            if kill -0 "$(cat app.pid)" 2>/dev/null; then
+              echo "Spring Boot application started"
+            else
+              echo "Application failed to start"
+              tail -50 app.log
+              exit 1
+            fi
 
